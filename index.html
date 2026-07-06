@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelderman Bouw — Hero (Figma 1:1, full height)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600&family=Exo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ==========================================================
+     Figma design tokens (www.keldermanbouw.nl library)
+     1 design-pixel = var(--u)  →  schaalt mee met schermbreedte,
+     hero staat altijd op volledige viewport-hoogte.
+     ========================================================== */
+  :root{
+    --u:calc(100vw / 1600);
+
+    --blue:#023381;            /* Resolution Blue */
+    --blue-box:#104881;        /* woordblok */
+    --blue-bar:#043F85;        /* progress inactief */
+    --yellow:#FFC013;          /* Lightning Yellow */
+    --yellow-bar:#FAB913;      /* progress actief */
+    --white:#FFFFFF;
+    --overlay:rgba(2,51,129,0.1);
+    --deco:#DFE5EF;
+
+    --font-exo:"Exo",sans-serif;
+    --font-exo2:"Exo 2",sans-serif;
+
+    --ease-build:cubic-bezier(.76,0,.18,1);
+    --hold:5200ms;
+  }
+  @media (max-width:760px){
+    :root{--u:calc(100vw / 900)}
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--font-exo);background:var(--white);overflow-x:hidden}
+  a{text-decoration:none;color:inherit}
+  button{font:inherit;border:0;background:none;cursor:pointer;color:inherit;padding:0}
+
+  /* ==========================================================
+     HERO — volledige viewport-hoogte
+     ========================================================== */
+  .hero{
+    position:relative;
+    height:100svh;
+    min-height:calc(var(--u) * 720);
+    overflow:hidden;
+    background:var(--white);
+  }
+  .overlay{position:absolute;inset:0;background:var(--overlay)}
+
+  /* ---------- "K" beeldmerk linksonder (Group 782) ---------- */
+  .deco{
+    position:absolute;
+    left:calc(var(--u) * -105);
+    bottom:calc(var(--u) * -70);          /* steekt onder de rand uit, zoals in Figma */
+    width:calc(var(--u) * 529.57);
+    height:calc(var(--u) * 523.28);
+    pointer-events:none;
+    z-index:1;
+  }
+  .deco svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:absolute;left:50%;top:0;transform:translateX(-50%);
+    width:calc(var(--u) * 1200);
+    height:calc(var(--u) * 100);
+    padding:0 calc(var(--u) * 35);
+    z-index:20;
+  }
+  .nav-inner{position:relative;height:100%}
+  .nav-logo{
+    position:absolute;left:0;top:0;
+    width:calc(var(--u) * 150);
+    height:calc(var(--u) * 195);
+    display:block;overflow:hidden;z-index:2;
+  }
+  .nav-logo img{width:100%;height:100%;display:block;object-fit:contain;object-position:top}
+  .nav-logo .logo-fallback{
+    display:none;width:100%;height:77%;background:var(--blue);
+    color:#fff;font-family:var(--font-exo2);font-weight:600;
+    text-align:center;padding-top:28%;
+    font-size:calc(var(--u) * 22);line-height:1.15;
+  }
+  .nav-logo .logo-fallback span{color:var(--yellow)}
+  .nav-logo.no-img img{display:none}
+  .nav-logo.no-img .logo-fallback{display:block}
+
+  .nav-right{position:absolute;right:0;top:0;height:100%}
+  .nav-top{
+    position:absolute;right:calc(var(--u) * -10);top:0;
+    height:calc(var(--u) * 40);
+    display:flex;align-items:center;
+  }
+  .nav-top .small-link{
+    display:block;
+    padding:calc(var(--u) * 20) calc(var(--u) * 15);
+    font-size:calc(var(--u) * 14);line-height:1;font-weight:400;
+    color:var(--blue);text-transform:lowercase;white-space:nowrap;
+  }
+  .nav-top .phone{
+    display:flex;align-items:center;justify-content:center;
+    height:calc(var(--u) * 40);
+    padding-left:calc(var(--u) * 39);padding-right:calc(var(--u) * 15);
+    background:var(--yellow);color:var(--white);
+    font-size:calc(var(--u) * 14);line-height:1.15;white-space:nowrap;
+  }
+  .nav-main{
+    position:absolute;right:calc(var(--u) * -4);top:calc(var(--u) * 40);
+    height:calc(var(--u) * 61);
+    display:flex;align-items:center;
+  }
+  .nav-main a{
+    display:block;
+    padding:calc(var(--u) * 20) calc(var(--u) * 25);
+    font-size:calc(var(--u) * 21);line-height:1;font-weight:400;
+    color:var(--blue);text-transform:lowercase;white-space:nowrap;
+    position:relative;
+  }
+  .nav-main a::after{
+    content:"";position:absolute;
+    left:calc(var(--u) * 25);right:calc(var(--u) * 25);bottom:calc(var(--u) * 12);
+    height:2px;background:var(--yellow);
+    transform:scaleX(0);transform-origin:left;
+    transition:transform .3s var(--ease-build);
+  }
+  .nav-main a:hover::after{transform:scaleX(1)}
+  @media (max-width:760px){
+    .nav-top,.nav-main{display:none}
+  }
+
+  /* ---------- Beeld rechts (858 → rechterrand, 148 → onderrand) ---------- */
+  .visual{
+    position:absolute;
+    left:calc(var(--u) * 858);right:0;
+    top:calc(var(--u) * 148);bottom:0;
+    overflow:hidden;background:var(--blue);
+    z-index:10;
+  }
+  .slide{position:absolute;inset:0;visibility:hidden}
+  .slide.is-active,.slide.is-leaving{visibility:visible}
+  .slide.is-leaving{z-index:1}
+  .slide.is-active{z-index:2}
+
+  .slat{position:absolute;top:0;height:100%;overflow:hidden;transform:translateY(-101%)}
+  .slat:nth-child(1){left:0;width:33.5%}
+  .slat:nth-child(2){left:33.3%;width:33.6%}
+  .slat:nth-child(3){left:66.6%;width:33.4%}
+  .slat .ph{
+    position:absolute;top:0;height:100%;width:300.6%;
+    background-size:cover;background-position:center;
+  }
+  .slat:nth-child(1) .ph{left:0}
+  .slat:nth-child(2) .ph{left:-99.6%}
+  .slat:nth-child(3) .ph{left:-199.2%}
+
+  .slide.is-active .slat{
+    transform:translateY(0);
+    transition:transform .72s var(--ease-build);
+  }
+  .slide.is-active .slat:nth-child(2){transition-delay:.09s}
+  .slide.is-active .slat:nth-child(3){transition-delay:.18s}
+
+  .slide .ph{transform:scale(1.02)}
+  .slide.is-active .ph{animation:kenburns 9s ease-out forwards}
+  @keyframes kenburns{from{transform:scale(1.07)}to{transform:scale(1)}}
+  .hero.is-paused .slide.is-active .ph{animation-play-state:paused}
+
+  /* ---------- Content kolom (x 235, verticaal gecentreerd) ---------- */
+  .content{
+    position:absolute;
+    left:calc(var(--u) * 235);
+    top:50%;transform:translateY(-50%);
+    width:calc(var(--u) * 490);
+    display:flex;flex-direction:column;
+    gap:calc(var(--u) * 27.666);
+    z-index:15;
+  }
+  .headline{
+    display:flex;flex-direction:column;align-items:flex-start;
+    gap:calc(var(--u) * 19.08);
+    font-family:var(--font-exo2);
+    color:var(--blue);
+  }
+  .headline .hl-line{
+    font-size:calc(var(--u) * 66.781);
+    font-weight:400;
+    line-height:calc(var(--u) * 46);        /* cap-getrimd zoals in Figma */
+    white-space:nowrap;
+  }
+  @supports (text-box-trim:trim-both){
+    .headline .hl-line{line-height:1;text-box-trim:trim-both;text-box-edge:cap alphabetic}
+  }
+
+  /* Het wisselwoord — blauw blok + letter-stagger animatie */
+  .word-box{
+    position:relative;
+    background:var(--blue-box);
+    height:calc(var(--u) * 80.3);           /* 17.15 + cap 46 + 17.15 */
+    padding:0 calc(var(--u) * 17.15);
+    display:flex;align-items:center;
+    overflow:hidden;
+    transition:width .55s var(--ease-build);
+    will-change:width;
+  }
+  .word-box .word{
+    position:absolute;left:calc(var(--u) * 17.15);top:0;height:100%;
+    display:inline-flex;align-items:center;
+    font-family:var(--font-exo2);font-weight:600;
+    font-size:calc(var(--u) * 66.781);line-height:1;
+    color:var(--white);text-transform:uppercase;white-space:nowrap;
+  }
+  .word-box .ch{
+    display:inline-block;
+    transform:translateY(130%);
+    will-change:transform;
+  }
+  .word-box .word.is-in .ch{
+    transform:translateY(0);
+    transition:transform .6s var(--ease-build);
+  }
+  .word-box .word.is-out .ch{
+    transform:translateY(-130%);
+    transition:transform .48s var(--ease-build);
+  }
+  .word-measure{
+    position:absolute;visibility:hidden;pointer-events:none;left:-9999px;top:0;
+    font-family:var(--font-exo2);font-weight:600;
+    font-size:calc(var(--u) * 66.781);line-height:1;
+    text-transform:uppercase;white-space:nowrap;
+  }
+
+  .body-copy{
+    width:calc(var(--u) * 415);
+    font-size:calc(var(--u) * 20);
+    line-height:1.3;font-weight:400;
+    color:var(--blue);
+  }
+
+  .cta{
+    display:inline-flex;align-items:center;justify-content:center;
+    gap:calc(var(--u) * 9.54);
+    align-self:flex-start;
+    background:var(--yellow);
+    padding:calc(var(--u) * 19.08) calc(var(--u) * 23.39);
+    position:relative;overflow:hidden;
+  }
+  .cta::before{
+    content:"";position:absolute;inset:0;background:#E8AD0F;
+    transform:translateX(-101%);transition:transform .35s var(--ease-build);
+  }
+  .cta > *{position:relative}
+  .cta:hover::before{transform:translateX(0)}
+  .cta .cta-arrow{
+    width:calc(var(--u) * 10.618);
+    height:calc(var(--u) * 12.399);
+    display:block;
+    transition:transform .35s var(--ease-build);
+  }
+  .cta:hover .cta-arrow{transform:translateX(4px)}
+  .cta .cta-label{
+    font-family:var(--font-exo);font-weight:700;
+    font-size:calc(var(--u) * 20.034);
+    line-height:calc(var(--u) * 15.36);
+    color:var(--blue);white-space:nowrap;
+  }
+
+  /* ---------- Slider-nav linksonder, uitgelijnd op de contentlijn ---------- */
+  .progress{
+    position:absolute;
+    left:calc(var(--u) * 235);              /* zelfde linkerlijn als titel/tekst/CTA */
+    bottom:calc(var(--u) * 53);
+    width:calc(var(--u) * 321);
+    height:calc(var(--u) * 4);
+    display:flex;gap:calc(var(--u) * 16);
+    z-index:15;
+  }
+  .progress button{
+    position:relative;flex:1 0 0;height:100%;
+    background:var(--blue-bar);
+    overflow:visible;
+  }
+  .progress button::before{content:"";position:absolute;inset:-14px 0}
+  .progress button i{
+    position:absolute;inset:0;background:var(--yellow-bar);
+    transform:scaleX(0);transform-origin:left;
+  }
+  .progress button.is-active i{animation:fillbar var(--hold) linear forwards}
+  @keyframes fillbar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .hero.is-paused .progress button.is-active i{animation-play-state:paused}
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion:reduce){
+    .slide .slat{transform:none;transition:none}
+    .slide{opacity:0;transition:opacity .5s ease}
+    .slide.is-active{opacity:1}
+    .slide.is-leaving{opacity:0}
+    .slide.is-active .ph{animation:none}
+    .word-box{transition:none}
+    .word-box .ch{transition:none !important}
+    .word-box .word{opacity:0;transition:opacity .4s ease}
+    .word-box .word.is-in{opacity:1}
+    .word-box .word.is-in .ch{transform:none}
+    .word-box .word.is-out{opacity:0}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero" id="hero">
+
+  <div class="overlay"></div>
+
+  <!-- "K" beeldmerk linksonder — exacte vorm, inline (geen externe afhankelijkheid) -->
+  <div class="deco" aria-hidden="true">
+    <svg viewBox="0 0 530 524" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet">
+      <rect x="6.10352e-05" y="271.27" width="90.3305" height="356.397"
+            transform="rotate(-45 6.10352e-05 271.27)" fill="#023381" fill-opacity="0.1"/>
+      <path d="M194.882 88.9682L285.213 0V167.607V251.411L529.571 251.411L441.592 335.214H285.213H194.882L194.882 88.9682Z"
+            fill="#023381" fill-opacity="0.1"/>
+    </svg>
+  </div>
+
+  <!-- Nav -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="#" id="logo">
+        <img src="assets/logo.png"
+             alt="Kelderman Bouw"
+             onerror="if(this.dataset.f){document.getElementById('logo').classList.add('no-img')}else{this.dataset.f=1;this.src='https://plate.libpx.com/prod1-img/6116314bcb/Kelderman-BOUW-FC.jpg?signature=49189a9e52bedd930ec1ffa26fd8ee78aaee2b55'}">
+        <span class="logo-fallback" aria-hidden="true">Kelderman<br><span>BOUW</span></span>
+      </a>
+
+      <div class="nav-right">
+        <div class="nav-top">
+          <a class="small-link" href="#">Nazorg &amp; Service</a>
+          <a class="small-link" href="#">Actueel</a>
+          <a class="small-link" href="#">Werken bij Kelderman</a>
+          <a class="phone" href="tel:0318519073">(0318) 519073</a>
+        </div>
+        <nav class="nav-main" aria-label="Hoofdmenu">
+          <a href="#">Diensten</a>
+          <a href="#">Karakterwoningen</a>
+          <a href="#">Over Kelderman</a>
+          <a href="#">Projecten</a>
+          <a href="#">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Beeld rechts -->
+  <div class="visual" id="visual"></div>
+
+  <!-- Content -->
+  <div class="content">
+    <h1 class="headline" aria-live="polite">
+      <span class="hl-line">Daar wordt het</span>
+      <span class="word-box" id="wordBox"></span>
+      <span class="hl-line">van</span>
+    </h1>
+
+    <p class="body-copy">
+      Al honderd jaar bouwen we in midden Nederland aan woningen, scholen,
+      kantoren en zorggebouwen. Samen met onze opdrachtgevers bouwen we
+      aan succes.
+    </p>
+
+    <a class="cta" href="#">
+      <svg class="cta-arrow" viewBox="0 0 11.13 13" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 5.5h7.2L3.9 2.2 5.4.7l5.73 5.8-5.73 5.8-1.5-1.5 3.3-3.3H0z" fill="#023381"/>
+      </svg>
+      <span class="cta-label">Lees meer</span>
+    </a>
+  </div>
+
+  <!-- Slider-nav -->
+  <div class="progress" id="progress" role="tablist" aria-label="Slides"></div>
+
+  <span class="word-measure" id="wordMeasure" aria-hidden="true"></span>
+</section>
+
+<script>
+(function(){
+  /* Beelden staan lokaal in ./assets (opgehaald uit Figma via
+     scripts/fetch-figma-assets.sh); fallback = blauwe gradients. */
+  var SLIDES = [
+    { word:"kwalitatiever", img:"assets/kwalitatiever.png",
+      fallback:"linear-gradient(160deg,#1d4f8f,#023381)" },
+    { word:"beter",         img:"assets/beter.png",
+      fallback:"linear-gradient(160deg,#2a5da0,#043f85)" },
+    { word:"duurzamer",     img:"assets/duurzamer.png",
+      fallback:"linear-gradient(160deg,#1a5a7e,#0b3a63)" },
+    { word:"sportiever",    img:"assets/sportiever.png",
+      fallback:"linear-gradient(160deg,#33639d,#104881)" },
+    { word:"mooier",        img:"assets/mooier.png",
+      fallback:"linear-gradient(160deg,#245089,#02306f)" }
+  ];
+
+  var HOLD = 5200;
+
+  var hero     = document.getElementById("hero");
+  var visual   = document.getElementById("visual");
+  var wordBox  = document.getElementById("wordBox");
+  var measure  = document.getElementById("wordMeasure");
+  var progress = document.getElementById("progress");
+
+  var current = -1, timer = null;
+
+  function padPx(){
+    /* actuele blokpadding in echte pixels (17.15 designpx) */
+    return parseFloat(getComputedStyle(wordBox).paddingLeft) || 0;
+  }
+
+  /* ---- Slides opbouwen (3 panelen per beeld) ---- */
+  SLIDES.forEach(function(s){
+    var slide = document.createElement("div");
+    slide.className = "slide";
+    for(var i=0;i<3;i++){
+      var slat = document.createElement("div");
+      slat.className = "slat";
+      var ph = document.createElement("div");
+      ph.className = "ph";
+      ph.style.backgroundImage = s.fallback;
+      (function(ph){
+        var probe = new Image();
+        probe.onload = function(){ ph.style.backgroundImage = "url('"+s.img+"'), "+s.fallback; };
+        probe.src = s.img;
+      })(ph);
+      slat.appendChild(ph);
+      slide.appendChild(slat);
+    }
+    visual.appendChild(slide);
+    s.el = slide;
+  });
+
+  /* ---- Slider-nav segmenten ---- */
+  SLIDES.forEach(function(s,i){
+    var b = document.createElement("button");
+    b.setAttribute("role","tab");
+    b.setAttribute("aria-label", s.word);
+    b.innerHTML = "<i></i>";
+    b.addEventListener("click",function(){ if(i!==current) go(i); });
+    progress.appendChild(b);
+    s.btn = b;
+  });
+
+  /* ---- Woordwissel: letter-stagger + breedte-animatie van het blok ---- */
+  function buildWord(text){
+    var w = document.createElement("span");
+    w.className = "word";
+    text.split("").forEach(function(ch,i){
+      var c = document.createElement("span");
+      c.className = "ch";
+      c.textContent = ch;
+      c.style.transitionDelay = (i*30)+"ms";
+      w.appendChild(c);
+    });
+    return w;
+  }
+
+  function sizeBoxTo(text){
+    measure.textContent = text.toUpperCase();
+    wordBox.style.width = (measure.offsetWidth + padPx()*2) + "px";
+  }
+
+  function swapWord(text){
+    sizeBoxTo(text);
+    var old = wordBox.querySelector(".word.is-in");
+    if(old){
+      old.classList.remove("is-in");
+      old.classList.add("is-out");
+      Array.prototype.forEach.call(old.children,function(c,i){
+        c.style.transitionDelay = (i*20)+"ms";
+      });
+      setTimeout(function(){ old.remove(); }, 850);
+    }
+    var next = buildWord(text);
+    wordBox.appendChild(next);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      next.classList.add("is-in");
+    });});
+  }
+
+  /* ---- Slidewissel ---- */
+  function go(idx){
+    clearTimeout(timer);
+
+    var prev = current >= 0 ? SLIDES[current] : null;
+    var next = SLIDES[idx];
+    current = idx;
+
+    swapWord(next.word);
+
+    if(prev){
+      prev.el.classList.remove("is-active");
+      prev.el.classList.add("is-leaving");
+      setTimeout(function(){ prev.el.classList.remove("is-leaving"); }, 1000);
+    }
+    next.el.classList.add("is-active");
+
+    SLIDES.forEach(function(s,i){
+      s.btn.classList.remove("is-active");
+      s.btn.setAttribute("aria-selected", i===idx ? "true":"false");
+    });
+    void next.btn.offsetWidth; /* herstart fill-animatie */
+    next.btn.classList.add("is-active");
+
+    timer = setTimeout(function(){ go((current+1)%SLIDES.length); }, HOLD);
+  }
+
+  /* blokbreedte mee laten schalen bij resize (font is vw-gebaseerd) */
+  var rT = null;
+  window.addEventListener("resize",function(){
+    clearTimeout(rT);
+    rT = setTimeout(function(){
+      if(current >= 0){
+        var t = wordBox.style.transition;
+        wordBox.style.transition = "none";
+        sizeBoxTo(SLIDES[current].word);
+        requestAnimationFrame(function(){ wordBox.style.transition = t; });
+      }
+    }, 120);
+  });
+
+  /* ---- Pauzeren bij hover over het beeld ---- */
+  visual.addEventListener("mouseenter",function(){
+    hero.classList.add("is-paused");
+    clearTimeout(timer);
+  });
+  visual.addEventListener("mouseleave",function(){
+    hero.classList.remove("is-paused");
+    clearTimeout(timer);
+    timer = setTimeout(function(){ go((current+1)%SLIDES.length); }, 2200);
+  });
+
+  document.addEventListener("visibilitychange",function(){
+    clearTimeout(timer);
+    if(!document.hidden){
+      timer = setTimeout(function(){ go((current+1)%SLIDES.length); }, 1500);
+    }
+  });
+
+  /* eerste woordblok zonder breedte-animatie neerzetten */
+  wordBox.style.transition = "none";
+  go(0);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    wordBox.style.transition = "";
+  });});
+})();
+</script>
+</body>
+</html>
