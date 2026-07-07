@@ -338,9 +338,9 @@
   <header class="nav">
     <div class="nav-inner">
       <a class="nav-logo" href="#" id="logo">
-        <img src="assets/logo.png"
+        <img src="assets/logo.svg"
              alt="Kelderman Bouw"
-             onerror="if(this.dataset.f){document.getElementById('logo').classList.add('no-img')}else{this.dataset.f=1;this.src='https://plate.libpx.com/prod1-img/6116314bcb/Kelderman-BOUW-FC.jpg?signature=49189a9e52bedd930ec1ffa26fd8ee78aaee2b55'}">
+             onerror="if(this.dataset.f=='2'){document.getElementById('logo').classList.add('no-img')}else if(this.dataset.f=='1'){this.dataset.f='2';this.src='https://plate.libpx.com/prod1-img/6116314bcb/Kelderman-BOUW-FC.jpg?signature=49189a9e52bedd930ec1ffa26fd8ee78aaee2b55'}else{this.dataset.f='1';this.src='assets/logo.png'}">
         <span class="logo-fallback" aria-hidden="true">Kelderman<br><span>BOUW</span></span>
       </a>
 
