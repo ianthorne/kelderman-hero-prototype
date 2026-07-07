@@ -161,32 +161,49 @@
     z-index:1;
   }
 
-  /* Masker-transitie: het nieuwe beeld opent vanuit het midden in
-     dezelfde verhouding als het beeldvlak zelf, met een soepele
-     ease-out. Het oude beeld blijft eronder volledig zichtbaar,
-     dus de achtergrond komt nooit in beeld. */
+  /* Vallende-balken transitie (het eerste-concept effect): het nieuwe
+     beeld valt in drie verticale panelen na elkaar naar beneden. Het
+     oude beeld blijft er statisch onder liggen, dus de achtergrond
+     komt nooit in beeld. */
   .slide{
     position:absolute;inset:0;
     visibility:hidden;
-    will-change:clip-path;
   }
-  .slide .ph{
-    position:absolute;inset:0;
+  .slide.is-active,.slide.is-leaving{visibility:visible}
+  .slide.is-leaving{z-index:1}
+  .slide.is-active{z-index:2}
+
+  .slat{
+    position:absolute;top:0;height:100%;
+    overflow:hidden;
+    transform:translateY(-101%);
+  }
+  .slat:nth-child(1){left:0;width:33.4%}
+  .slat:nth-child(2){left:33.3%;width:33.5%}
+  .slat:nth-child(3){left:66.6%;width:33.4%}
+  .slat .ph{
+    position:absolute;top:0;height:100%;width:300.5%;
     background-size:cover;background-position:center;
-    will-change:transform;
   }
-  .slide.is-active{
-    visibility:visible;z-index:2;
-    animation:maskReveal 1s cubic-bezier(.22,1,.36,1) both;
+  .slat:nth-child(1) .ph{left:0}
+  .slat:nth-child(2) .ph{left:-99.7%}
+  .slat:nth-child(3) .ph{left:-199.4%}
+
+  /* oud beeld blijft volledig en statisch staan tot de nieuwe balken vielen */
+  .slide.is-leaving .slat{transform:translateY(0)}
+
+  /* nieuwe balken vallen na elkaar naar beneden */
+  .slide.is-active .slat{
+    transform:translateY(0);
+    transition:transform .72s var(--ease-build);
   }
-  .slide.is-leaving{visibility:visible;z-index:1}
-  @keyframes maskReveal{
-    from{clip-path:inset(50% 50% 50% 50%)}
-    to  {clip-path:inset(0% 0% 0% 0%)}
-  }
-  .slide.is-active .ph{animation:kenburns 8s ease-out forwards}
-  @keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1)}}
-  .hero.is-paused .slide.is-active .ph{animation-play-state:paused}
+  .slide.is-active .slat:nth-child(2){transition-delay:.09s}
+  .slide.is-active .slat:nth-child(3){transition-delay:.18s}
+
+  /* subtiele ken-burns zolang het beeld staat */
+  .slide.is-active .slat .ph{animation:kenburns 8s ease-out forwards}
+  @keyframes kenburns{from{transform:scale(1.05)}to{transform:scale(1)}}
+  .hero.is-paused .slide.is-active .slat .ph{animation-play-state:paused}
 
   /* Slider-nav onder het beeld (Figma: 219 vanaf linkerrand beeld, 88 eronder)
      — rechts van de K, en beweegt met beeld + K mee als één geheel */
@@ -315,10 +332,11 @@
 
   /* ---------- Reduced motion ---------- */
   @media (prefers-reduced-motion:reduce){
-    .slide.is-active{animation:none !important;clip-path:none;opacity:1;transition:opacity .5s ease}
-    .slide{opacity:0}
+    .slide .slat{transform:none;transition:none}
+    .slide{opacity:0;transition:opacity .5s ease}
+    .slide.is-active{opacity:1}
     .slide.is-leaving{opacity:0}
-    .slide.is-active .ph{animation:none}
+    .slide.is-active .slat .ph{animation:none}
     .word-box{transition:none}
     .word-box .ch{transition:none !important}
     .word-box .word{opacity:0;transition:opacity .4s ease}
@@ -432,17 +450,24 @@
     return parseFloat(getComputedStyle(wordBox).paddingLeft) || 0;
   }
 
-  /* ---- Slides opbouwen ---- */
+  /* ---- Slides opbouwen (3 panelen per beeld voor het vallende-balken effect) ---- */
   SLIDES.forEach(function(s){
     var slide = document.createElement("div");
     slide.className = "slide";
-    var ph = document.createElement("div");
-    ph.className = "ph";
-    ph.style.backgroundImage = s.fallback;
-    var probe = new Image();
-    probe.onload = function(){ ph.style.backgroundImage = "url('"+s.img+"'), "+s.fallback; };
-    probe.src = s.img;
-    slide.appendChild(ph);
+    for(var i=0;i<3;i++){
+      var slat = document.createElement("div");
+      slat.className = "slat";
+      var ph = document.createElement("div");
+      ph.className = "ph";
+      ph.style.backgroundImage = s.fallback;
+      (function(ph){
+        var probe = new Image();
+        probe.onload = function(){ ph.style.backgroundImage = "url('"+s.img+"'), "+s.fallback; };
+        probe.src = s.img;
+      })(ph);
+      slat.appendChild(ph);
+      slide.appendChild(slat);
+    }
     visual.appendChild(slide);
     s.el = slide;
   });
@@ -507,15 +532,14 @@
 
     if(prev){
       prev.el.classList.remove("is-active");
-      prev.el.classList.add("is-leaving");
+      prev.el.classList.add("is-leaving");   /* oud beeld blijft statisch onder liggen */
       (function(el){
-        setTimeout(function(){ el.classList.remove("is-leaving"); }, 1050);
+        setTimeout(function(){ el.classList.remove("is-leaving"); }, 950);
       })(prev.el);
-      next.el.style.animation = "";           /* masker-animatie toestaan */
-    }else{
-      next.el.style.animation = "none";       /* eerste slide: geen masker */
     }
-    void next.el.offsetWidth;                 /* reflow: animatie herstarten */
+    /* balken van de nieuwe slide instant terugzetten boven het frame, dan laten vallen */
+    next.el.classList.remove("is-leaving");
+    void next.el.offsetWidth;                /* reflow: valanimatie (her)start */
     next.el.classList.add("is-active");
 
     SLIDES.forEach(function(s,i){
